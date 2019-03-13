@@ -47,14 +47,13 @@ reverse(List("Ala", "Ala", "Ala")) == List("Ala", "Ala", "Ala")
 
 //Zadanie 4
 def replicate(xs: List[Int]): List[Int] = {
-	def replicateInternal(n: Int, elem: Int): List[Int] =
-		if (n > 0) elem::replicateInternal(n-1, elem)
-		else Nil
-
-	xs match {
-		case h::t => if (h > 0) replicateInternal(h, h):::replicate(t) else replicate(t)
-		case Nil => Nil
-	}
+	def replicateInternal(n: Int, elem: Int, xs: List[Int]): List[Int] =
+		xs match {
+			case _ if n > 0 => elem::replicateInternal(n-1, elem, xs)
+			case h::t => replicateInternal(h, h, t)
+			case Nil =>	Nil
+		}
+	replicateInternal(0, 0, xs)
 }
 
 replicate(List(1,0,4,-2,3)) == List(1,4,4,4,4,3,3,3)
