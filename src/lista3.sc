@@ -76,12 +76,12 @@ remove1B(Nil)(_ == 2) == Nil
 //Zadanie 4
 def splitAt[A](xs: List[A])(n: Int): (List[A], List[A]) = {
 	def splitAtInternal(n: Int, ls: List[A], rs: List[A]): (List[A], List[A]) =
-		ls match {
-			case h::t => if (n > 0) splitAtInternal(n-1, t, h::rs) else (rs.reverse, ls)
-			case Nil => (rs.reverse, ls)
+		rs match {
+			case h::t => if (n > 0) splitAtInternal(n-1, h::ls, t) else (ls.reverse, rs)
+			case Nil => (ls.reverse, rs)
 		}
 
-	splitAtInternal(n, xs, Nil)
+	splitAtInternal(n, Nil, xs)
 }
 
 splitAt(List('a','b','c','d','e'))(2) == (List('a','b'), List('c','d','e'))
