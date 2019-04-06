@@ -66,10 +66,7 @@ val g = Graph((i: Int) =>
 def pathExists[A](g: Graph[A])(from: A, to: A): Boolean = {
 	def pathExistsInternal(visited: List[A], toVisit: List[A]): Boolean =
 		toVisit match {
-			case h::t => h == to || (
-				if (visited contains h) pathExistsInternal(visited, t)
-				else pathExistsInternal(h :: visited, t ::: (g succ h))
-			)
+			case h::t => h == to || (visited contains h) && pathExistsInternal(visited, t) || pathExistsInternal(h :: visited, t ::: (g succ h))
 			case Nil => false
 		}
 
@@ -84,4 +81,4 @@ pathExists(g)(0,3)
 !pathExists(g)(0,1)
 !pathExists(g)(0,2)
 !pathExists(g)(0,4)
-!pathExists(g)(1,10)
+!pathExists(g)(0,5)
