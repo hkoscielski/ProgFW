@@ -1,7 +1,9 @@
 //Hubert Kościelski
+import java.io.File
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future, Promise}
+import scala.io.Source
 import scala.util.{Failure, Success}
 
 object L11_Zad1 extends App {
@@ -97,4 +99,34 @@ object L11_Zad2b extends App {
 	} exists (v => v > 5)
 	val res3 = Await.result(fut3, 3.seconds)
 	println(s"Future 3 result = $res3")
+}
+
+//Zadanie 3
+object WordCount {
+	def main(args: Array[String]) {
+		val path = "D:\\Zad3\\"
+		val promiseOfFinalResult = Promise[Seq[(String, Int)]]
+		// Tu oblicz promiseOfFinalResult
+		promiseOfFinalResult tryCompleteWith {
+			scanFiles(path).flatMap { processFiles }
+		}
+
+		promiseOfFinalResult.future onComplete {
+			case Success(result) => result.sortWith(_._2 < _._2) foreach println
+			case Failure(t) => t.printStackTrace
+		}
+		Thread.sleep(5000)
+	}
+	// Oblicza liczbę słów w każdym pliku z sekwencji wejściowej
+	private def processFiles(fileNames: Seq[String]): Future[Seq[(String, Int)]] =
+		// Wskazówka. Wykorzystaj Future.sequence(futures)
+		Future.sequence(fileNames.map { processFile })
+	// Oblicza liczbę słów w podanym pliku i zwraca parę: (nazwa pliku, liczba słów)
+	private def processFile(fileName: String): Future[(String, Int)] = {
+		val file = Source.fromFile(fileName)
+		Future {(fileName, try file.mkString.split("\\s+").length finally file.close)}
+	}
+	// Zwraca sekwencję nazw plików (w naszym przypadku Array[String])
+	private def scanFiles(docRoot: String): Future[Seq[String]] =
+		Future { new File(docRoot).list.map(docRoot + _) }
 }
